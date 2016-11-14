@@ -1,0 +1,188 @@
+<HTML>
+	<HEAD>
+		<META charset="utf-8"/>
+        <title>Pinball 3D</title>
+		<script id="vertex-shader" type="x-shader/x-vertex">
+			attribute vec3 vPosition;
+			attribute vec2 vTextCoord;	
+			attribute vec3 vNormal;	
+			
+			varying vec3 N, L, E;
+			varying vec2 fTextCoord;
+			
+			uniform mat4 uMMatrix;
+			uniform mat4 uVMatrix;
+			uniform mat4 uPMatrix;
+			uniform mat3 uNMatrix;
+			
+			uniform vec3 lightPosition;
+			
+			void main(void)
+			{
+				vec4 worldPosition = uVMatrix * uMMatrix *
+									vec4(vPosition, 1.0);
+				vec3 pos = -(worldPosition).xyz;
+				
+				L = normalize(lightPosition - pos);
+				E = normalize(-pos);
+				N = normalize(uNMatrix * vNormal);
+				
+				fTextCoord = vTextCoord;
+
+				gl_Position = uPMatrix * worldPosition;
+				
+			}
+		</script>
+		<script id="fragment-shader" type="x-shader/x-fragment">
+			precision mediump float;
+
+			uniform vec3 uKa;
+			uniform vec3 uIa;
+			uniform vec3 uKd;
+			uniform vec3 uId;
+			uniform vec3 uKs;
+			uniform vec3 uIs;
+			uniform float uShininess;
+			uniform float uLightStrength;
+
+			uniform sampler2D uSampler;
+			
+			varying vec3 N, L, E;
+			varying vec2 fTextCoord;
+			
+			void main(void)
+			{
+				vec4 ambientProduct = vec4(uIa * uKa, 1.0);
+				vec4 diffuseProduct = vec4(uId * uKd, 1.0);
+				vec4 specularProduct = vec4(uIs * uKs, 1.0);
+				float shininess = uShininess;
+				
+				vec4 ambient = ambientProduct;
+				
+				float dVec = max( dot(L, N), 0.0 );
+				vec4  diffuse = dVec * diffuseProduct * 
+								uLightStrength;
+				
+				vec3 H = normalize( L + E );
+				float sVec = pow( max(dot(N, H), 0.0), shininess );
+				vec4  specular = sVec * specularProduct *
+								uLightStrength;
+
+				if( dot(L, N) < 0.0 ) {
+					specular = vec4(0.0, 0.0, 0.0, 1.0);
+				}
+				
+				vec4 fColor = ambient + diffuse + specular;
+				fColor.a = 1.0;
+
+				gl_FragColor = texture2D(uSampler, 
+										vec2(fTextCoord.s, 
+											fTextCoord.t));
+				 
+			}
+		</script>
+        <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+		<link href="css/interface.css" rel="stylesheet" type="text/css">
+		
+		<script type="text/javascript" src="Common/webgl-utils.js"></script>
+		<script type="text/javascript" src="Common/initShaders.js"></script>
+		<script type="text/javascript" src="Common/MV.js"></script>
+		<script type="text/javascript" src="Common/jquery-2.1.0.min.js"></script>
+       	<script type="text/javascript" src="Common/dat.gui.min.js"></script>
+       	<script type="text/javascript" src="Common/glMatrix-0.9.5.min.js"></script>
+        
+		<script type="text/javascript" src="js/Inheritance.js"></script>
+        <script type="text/javascript" src="js/Constants.js"></script>
+        <script type="text/javascript" src="js/MathUtils.js"></script>
+        <script type="text/javascript" src="js/ObjectOBJ.js"></script>
+        <script type="text/javascript" src="js/DrawableObject.js"></script>
+        <script type="text/javascript" src="js/RealObject.js"></script>
+        <script type="text/javascript" src="js/Group.js"></script>
+        <script type="text/javascript" src="js/SkyBox.js"></script>
+        <script type="text/javascript" src="js/Table.js"></script>
+        <script type="text/javascript" src="js/Bumper.js"></script>
+        <script type="text/javascript" src="js/BumperGroup.js"></script>
+        <script type="text/javascript" src="js/Kicker.js"></script>
+        <script type="text/javascript" src="js/KickerGroup.js"></script>
+        <script type="text/javascript" src="js/BallGenerator.js"></script>
+        <script type="text/javascript" src="js/Wall.js"></script>
+        <script type="text/javascript" src="js/WallGroup.js"></script>
+        <script type="text/javascript" src="js/Plunger.js"></script>
+        <script type="text/javascript" src="js/Ball.js"></script>
+        <script type="text/javascript" src="js/BallGroup.js"></script>
+        <script type="text/javascript" src="js/Flipper.js"></script>
+        <script type="text/javascript" src="js/FlipperGroup.js"></script>
+        <script type="text/javascript" src="js/LightManager.js"></script>
+        <script type="text/javascript" src="js/CameraManager.js"></script>
+        <script type="text/javascript" src="js/SoundManager.js"></script>
+        <script type="text/javascript" src="js/ScoreManager.js"></script>
+        <script type="text/javascript" src="js/World.js"></script>
+        <script type="text/javascript" src="js/Game.js"></script>
+        <script type="text/javascript" src="js/ButtonControls.js"></script>
+        <script type="text/javascript" src="js/KeyControls.js"></script>
+        <script type="text/javascript" src="js/test.js"></script>
+		
+	</HEAD>
+	<BODY>
+        <div class="LightControls Hide" id="divLightControls"></div>
+        <div class="Header" id="divHeader">
+            <div class="Text" id="lblScore">
+                Score: <span id="valScore">0</span>
+            </div>
+            <div class="Text" id="lblLifes">
+                Lifes: <span id="valLifes">3</span>
+            </div> 
+            <div class="Button Light" id="btnLight"></div>
+            <div class="Button SoundOn" id="btnSound"></div>
+            <div class="Button Reinit" id="btnReinit"></div>
+            <div class="Button Play" id="btnPlay"></div>
+        </div>
+        <canvas id="gl-canvas">
+            Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+        <div class="Footer Text" id="divFooter">
+            <a id="btnInstructions">Instructions</a>
+        </div>
+        <div class="Box Text Hide" id="divInstructions">
+            <div class="BoxTitle">
+                Instructions
+                <a id="btnCloseInstructions" class="Close">x</a> 
+            </div>
+            <div class="BoxContent">
+                <div class="BoxBlock">
+                    <div class="Key Space"></div>
+                    Press down to gain force.
+                </div>
+                <div class="BoxBlock">
+                    <div class="Key Space"></div>
+                    Release to shoot the ball.
+                </div>
+                <div class="BoxBlock">
+                    <div class="Key Z"></div>
+                    Press to move left flipper.
+                </div>
+                <div class="BoxBlock">
+                    <div class="Key X"></div>
+                    Press to move right flipper.
+                </div>
+                <div class="BoxBlock">
+                    <div class="Key Up"></div>
+                    Press to tilt the table more.
+                </div>
+                <div class="BoxBlock">
+                    <div class="Key Down"></div>
+                    Press to tilt the table less.
+                </div>
+            </div>
+        </div>
+        <div class="FullScreen Hide" id="divGameOver"></div>
+        <div class="CenteredScreen Text Hide" id="divCenterGameOver">
+                Game Over :(</br>
+                Your score was: 
+                <span id="valScore">0</span>
+                <div class="NewGame" id="btnNewGame">
+                    Play Again!!!
+                </div>
+            </div>
+	</BODY>
+</HTML>

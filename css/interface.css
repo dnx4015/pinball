@@ -1,0 +1,166 @@
+body{
+    margin:0;
+}
+.LightControls{
+    float:right;
+}
+.Header{
+    background-color: RGBA(250, 250, 250, 100);
+    padding: 10px;
+    border-bottom: 1px dashed;
+    height:30px;
+}
+.Footer{
+    background-color: RGBA(250, 250, 250, 100);
+    border-top: 1px dashed;
+    width:100%;
+    height:30px;
+}
+.Text{
+    display:inline-block;
+    font-weight: normal;
+    font-style: normal;
+    line-height: normal;
+    color: #444444;
+    font-family: 'Indie Flower',sans-serif;
+    font-size: 20px;
+    vertical-align:super;
+}
+#lblScore{
+    width: 200px;
+}
+#lblLifes{
+    width: 100px;
+}
+.Button{
+    height: 30px;
+    width: 30px;
+    margin-right:10px;
+    display: inline-block;
+    background: url("../img/buttons.png") no-repeat scroll rgba(0, 0, 0, 0);
+    float:right;
+}
+.Button:hover{
+    background-position-y:-30;
+    cursor:pointer;
+}
+.Play{
+    background-position-x:0;
+}
+.Pause{
+    background-position-x:-30;
+}
+.Reinit{
+    background-position-x:-60;
+}
+.Light{
+    background-position-x:-90;
+}
+.SoundOn{
+    background-position-x:-121;
+}
+.SoundOff{
+    background-position-x:-151;
+}
+
+a{
+    cursor:pointer;
+    margin-left:10px;
+}
+a:hover{
+    color:darkgray;
+}
+.Box{
+    width:700px;
+    position: absolute;
+    bottom: 0;
+}
+.BoxTitle{
+    background-color: darkseagreen;
+    padding: 7px;
+    border-radius: 6px 6px 0px 0px;
+    width:100%;
+}
+.Close{
+    display:inline-block;
+    float:right;
+}
+.BoxContent{
+    width:100%;
+    padding:7px;
+    background-color:whitesmoke;
+}
+.BoxBlock{
+    width:320;
+    display:inline-block;
+    margin-right:25px;
+}
+.Key{
+    height: 28px;
+    width: 26px;
+    display: inline-block;
+    background: url("../img/keys.png") no-repeat scroll rgba(0, 0, 0, 0);
+}
+.Up{
+    background-position-x:0px;
+}
+.Down{
+    background-position-x:-26px;
+}
+.Z{
+    background-position-x:-52px;
+}
+.X{
+    background-position-x:-78px;
+}
+.Space{
+    background-position-x:-104px;
+    width:88px;
+}
+.Show{
+    display:auto;
+}
+.Hide{
+    display:none;
+}
+
+.FullScreen{
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: black;
+	height: 100%;
+	width: 100%;
+	opacity: 0.8;
+}
+
+.CenteredScreen{
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 300px;
+	height: 100px;
+	margin-top: -70px;
+	margin-left: -170px;
+	padding: 35px 40px 45px 40px;
+	background: lightgrey;
+	border-radius: 5px;
+	text-align: center;
+	font-size: x-large;
+	color: cadetblue;
+	opacity: 1.0;
+}
+
+.NewGame{
+	background: cadetblue;
+	width: 50%;
+	margin: 0 auto;
+	border: 1px solid darkgray;
+	border-radius: 4px;
+	padding: 4px;
+	color: whitesmoke;
+}
+
+.NewGame:hover{
+	cursor:pointer;
+}
